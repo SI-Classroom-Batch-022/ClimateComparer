@@ -24,7 +24,7 @@ ClimateComparer soll eine minimalistische und intuitive Wetter-App werden, die d
 
 ---
 
-## UML-Diagramm
+## 📊 UML-Diagramm
 
 ```mermaid
 classDiagram
