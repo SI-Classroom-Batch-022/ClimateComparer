@@ -1,5 +1,7 @@
 # ClimateComparer
 
+## UML-Diagramm
+
 ```mermaid
 classDiagram
     class ClimateComparer {
