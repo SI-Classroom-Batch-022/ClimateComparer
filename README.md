@@ -13,8 +13,6 @@
 5. [🔌 API & Datenquellen](#-api--datenquellen)
 6. [🧪 Testing](#-testing)
 7. [🛠️ Technologien](#️-technologien)
-8. [🧠 ToDos & Issues](#-todos--issues)
-9. [💬 Kontakt & Mitwirken](#-kontakt--mitwirken)
 
 ---
 
