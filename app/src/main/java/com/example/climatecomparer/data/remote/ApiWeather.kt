@@ -1,12 +1,14 @@
 package com.example.climatecomparer.data.remote
 
+import com.example.climatecomparer.data.model.WeatherResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 
-const val WEATHER_URL = "https://api.open-meteo.com/v1/forecast"
+const val WEATHER_URL = "https://api.open-meteo.com/v1/"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
@@ -17,14 +19,20 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(WEATHER_URL)
     .build()
 
-interface APIService {
+interface WeatherAPIService {
 
-    @GET("current")
+    @GET("forecast")
     suspend fun getCurrentWeather(
-
-    )
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("current") current: String = "temperature_2m,weather_code,uv_index,wind_speed_10m,wind_direction_10m,precipitation",
+        @Query("wind_speed_unit") windSpeedUnit: String = "kmh",
+        @Query("precipitation_unit") precipitationUnit: String = "mm"
+    ): WeatherResponse
 }
 
-object MealsAPI {
-    val retrofitService: GeoLocationAPIService by lazy { retrofit.create(GeoLocationAPIService::class.java) }
+object WeatherAPI {
+    val retrofitService: WeatherAPIService by lazy {
+        retrofit.create(WeatherAPIService::class.java)
+    }
 }

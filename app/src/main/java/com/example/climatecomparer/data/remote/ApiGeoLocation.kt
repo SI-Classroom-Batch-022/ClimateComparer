@@ -3,7 +3,6 @@ package com.example.climatecomparer.data.remote
 import com.example.climatecomparer.data.model.GeoResponse
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import kotlinx.coroutines.runBlocking
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -37,13 +36,3 @@ object GeoLocationAPI {
     }
 }
 
-private fun main() = runBlocking {
-    val api = GeoLocationAPI.retrofitService
-
-    try {
-        val response = api.searchCityByName("Berlin")
-        print("API response: $response")
-    } catch(e: Exception) {
-        println("API error: ${e.message}")
-    }
-}
