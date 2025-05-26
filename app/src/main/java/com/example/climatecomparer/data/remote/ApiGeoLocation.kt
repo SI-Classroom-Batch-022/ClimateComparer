@@ -38,7 +38,7 @@ private fun main() = runBlocking {
     val api = GeoLocationAPI.retrofitService
 
     try {
-        val response = api.searchCityByName("Berlin")
+        val response = api.searchCityByName("Vaduz")
         print("API response: $response")
     } catch(e: Exception) {
         println("API error: ${e.message}")
