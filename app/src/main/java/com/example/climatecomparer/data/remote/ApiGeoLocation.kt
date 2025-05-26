@@ -24,7 +24,10 @@ interface GeoLocationAPIService {
 
     @GET("search")
     suspend fun searchCityByName(
-        @Query("name") cityName: String
+        @Query("name") cityName: String,
+        @Query("count") count: Int = 10,
+        @Query("language") language: String = "de",
+        @Query("format") format: String = "json"
     ): GeoResponse
 }
 
