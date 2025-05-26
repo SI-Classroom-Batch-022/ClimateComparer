@@ -6,8 +6,6 @@ data class GeoLocation(
     val name: String? = null,
     val latitude: Double,
     val longitude: Double,
-    @Json(name = "postcode")
-    val postcode: String? = null,
     val country: String? = null,
     @Json(name = "admin1")
     val state: String? = null

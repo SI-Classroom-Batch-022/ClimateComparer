@@ -5,7 +5,7 @@ import com.example.climatecomparer.data.model.GeoLocation
 import com.example.climatecomparer.data.remote.GeoLocationAPIService
 import com.example.climatecomparer.data.repository.repointerface.GeoLocationRepositoryInterface
 
-class GeoLocationRepositoryImpl(
+abstract class GeoLocationRepositoryImpl(
     val apiSource: GeoLocationAPIService
 ): GeoLocationRepositoryInterface {
 
@@ -17,7 +17,6 @@ class GeoLocationRepositoryImpl(
                     latitude = 0.0,
                     longitude = 0.0,
                     name = null,
-                    postcode = null,
                     country = null,
                     state = null
                 )
@@ -27,7 +26,6 @@ class GeoLocationRepositoryImpl(
                 latitude = 0.0,
                 longitude = 0.0,
                 name = null,
-                postcode = null,
                 country = null,
                 state = null
             )
