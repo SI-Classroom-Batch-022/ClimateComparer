@@ -1,7 +1,6 @@
 package com.example.climatecomparer.data.remote
 
 import com.example.climatecomparer.data.model.GeoResponse
-import com.example.climatecomparer.data.repository.impl.GeoLocationRepositoryImpl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
@@ -25,11 +24,8 @@ interface GeoLocationAPIService {
 
     @GET("search")
     suspend fun searchCityByName(
-        @Query("name") cityName: String,
-        @Query("count") count: Int = 10,
-        @Query("language") language: String = "de"
+        @Query("name") cityName: String
     ): GeoResponse
-
 }
 
 object GeoLocationAPI {
@@ -39,10 +35,12 @@ object GeoLocationAPI {
 }
 
 private fun main() = runBlocking {
-    val repo = GeoLocationRepositoryImpl(GeoLocationAPI.retrofitService)
-    val cities = repo.fetchCitiesByName("Berlin")
+    val api = GeoLocationAPI.retrofitService
 
-    cities.forEach {
-        println("Stadt: ${it.geoLocation.name}, Wo?: ${it.geoLocation.country}, ${it.geoLocation.state}, Lat: ${it.geoLocation.latitude}, Lon: ${it.geoLocation.longitude}")
+    try {
+        val response = api.searchCityByName("Berlin")
+        print("API response: $response")
+    } catch(e: Exception) {
+        println("API error: ${e.message}")
     }
 }
