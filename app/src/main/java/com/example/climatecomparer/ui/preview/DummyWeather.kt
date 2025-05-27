@@ -19,8 +19,6 @@ val dummyWeather = Weather(
     ),
     temperature = 21.5,
     weatherState = WeatherState.SUNNY,
-    uvIndex = 5,
-    rainFall = 0.0,
     windSpeed = 10.0,
     windDirection = 135.0,
     timeStamp = LocalDateTime.of(2023, 1, 1, 12, 0)

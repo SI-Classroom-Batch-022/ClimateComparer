@@ -28,10 +28,8 @@ class WeatherRepositoryImpl(
                 city = city,
                 temperature = current.temperature,
                 weatherState = mapWeatherCodeToState(current.weatherCode),
-                uvIndex = current.uvIndex.toInt(),
                 windSpeed = current.windSpeed,
                 windDirection = current.windDirection,
-                rainFall = current.precipitation,
                 timeStamp = LocalDateTime.parse(current.time)
             )
         } catch (e: Exception) {
@@ -45,8 +43,8 @@ class WeatherRepositoryImpl(
         return try {
             val lat = city.geoLocation.latitude
             val lon = city.geoLocation.longitude
-            val response = apiSource.getHourlyWeather(lat, lon)
-            val hourly = response.hourlyWeather
+            val hourlyResponse = apiSource.getHourlyWeather(lat, lon)
+            val hourly = hourlyResponse.hourlyWeather
 
             mapHourlyDataToList(hourly)
         } catch (e: Exception) {
@@ -90,11 +88,12 @@ class WeatherRepositoryImpl(
                 uvIndex = hourly.uvIndex[weatherNow],
                 windSpeed = hourly.windSpeed[weatherNow],
                 windDirection = hourly.windDirection[weatherNow],
-                precipitation = hourly.precipitation[weatherNow]
+                precipitation = hourly.rainFall[weatherNow]
             )
         }
     }
 }
+
 
 
 
@@ -111,7 +110,7 @@ fun main() = runBlocking {
         }
 
         val city = City(
-            geoLocation = geoLocation,
+            geoLocation = geoLocation.copy(locationName = cityName),
             isFavorite = false
         )
 
@@ -124,9 +123,7 @@ fun main() = runBlocking {
             println("Aktuelles Wetter in ${city.geoLocation.locationName ?: "Unbekannte Stadt"}:")
             println("  Temperatur: ${currentWeather.temperature}°C")
             println("  Zustand: ${currentWeather.weatherState.description}")
-            println("  UV-Index: ${currentWeather.uvIndex}")
             println("  Wind: ${currentWeather.windSpeed} km/h aus ${currentWeather.windDirection}°")
-            println("  Niederschlag: ${currentWeather.rainFall} mm")
             println("  Zeitstempel: ${currentWeather.timeStamp}")
         } else {
             println("Fehler beim Abrufen des aktuellen Wetters für ${city.geoLocation.locationName}")
