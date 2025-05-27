@@ -376,8 +376,11 @@ private fun WeatherDetailCard(
 
 @Composable
 private fun WeatherStateDetailCard(weatherState: WeatherState) {
-    GlassmorphismCard(
-        modifier = Modifier.fillMaxWidth()
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = getWeatherColor(weatherState).copy(alpha = 0.35f)
+        )
     ) {
         Row(
             modifier = Modifier
