@@ -334,11 +334,12 @@ private fun WeatherDetailCard(
 ) {
     SmallGlassmorphismCard(
         modifier = modifier
+            .height(120.dp) // Fixed height for all cards
     ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
+                .fillMaxSize(), // Fill the entire card space
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -355,7 +356,8 @@ private fun WeatherDetailCard(
                 text = title,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
-                color = Color.White.copy(alpha = 0.8f)
+                color = Color.White.copy(alpha = 0.8f),
+                maxLines = 1 // Prevent text wrapping
             )
 
             Text(
@@ -363,7 +365,8 @@ private fun WeatherDetailCard(
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = valueColor,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                maxLines = 1
             )
 
             if (subtitle != null) {
@@ -371,7 +374,8 @@ private fun WeatherDetailCard(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White.copy(alpha = 0.7f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
                 )
             }
         }
