@@ -121,7 +121,7 @@ private fun SmallGlassmorphismCard(
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
-                        Color.White.copy(alpha = 0.3f),
+                        Color.Black.copy(alpha = 0.3f),
                         Color.White.copy(alpha = 0.2f)
                     )
                 )
@@ -338,7 +338,7 @@ private fun WeatherDetailCard(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(), // Ensures the column takes full width
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -438,8 +438,8 @@ private fun getWeatherIcon(weatherState: WeatherState): ImageVector {
 private fun getWeatherColor(weatherState: WeatherState): Color {
     return when (weatherState) {
         WeatherState.SUNNY -> Color(0xFFFFB74D)
-        WeatherState.PARTLY_CLOUDY -> Color(0xFF90A4AE)
-        WeatherState.CLOUDY -> Color(0xFF78909C)
+        WeatherState.PARTLY_CLOUDY -> Color(0xFF1D6EB3)
+        WeatherState.CLOUDY -> Color(0xFF282727)
         WeatherState.RAINY -> Color(0xFF42A5F5)
         WeatherState.STORMY -> Color(0xFF5C6BC0)
         WeatherState.SNOWY -> Color(0xFF9C27B0)
