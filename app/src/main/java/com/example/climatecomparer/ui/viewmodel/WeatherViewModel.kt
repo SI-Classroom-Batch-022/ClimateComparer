@@ -38,7 +38,7 @@ class WeatherViewModel(
                         )
                     }
                 } else {
-                    _uiState.update { it.copy(isLoading = false, error = "Wheater data unavailable.") }
+                    _uiState.update { it.copy(isLoading = false, error = "Weather data unavailable.") }
                 }
             } catch (e: Exception) {
                 _uiState.update {

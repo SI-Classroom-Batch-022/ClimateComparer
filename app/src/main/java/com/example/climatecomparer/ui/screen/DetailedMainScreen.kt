@@ -30,6 +30,8 @@ import com.example.climatecomparer.data.model.Weather
 import com.example.climatecomparer.data.model.WeatherState
 import com.example.climatecomparer.ui.preview.dummyWeather
 import com.example.climatecomparer.ui.theme.ClimateComparerTheme
+import com.example.climatecomparer.ui.viewmodel.WeatherViewModel
+import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 
 enum class ForecastPeriod(val displayName: String, val days: Int) {
@@ -43,9 +45,12 @@ fun DetailedMainScreen(
     weather: Weather,
     hourlyWeather: List<Weather> = emptyList(),
     dailyWeather: List<Weather> = emptyList(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    weatherViewModel: WeatherViewModel = koinViewModel()
 ) {
     var selectedForecastPeriod by remember { mutableStateOf(ForecastPeriod.SEVEN_DAYS) }
+
+    val uiState by weatherViewModel.uiState.collectAsState()
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -68,7 +73,9 @@ fun DetailedMainScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Aktuelles Wetter Header
-            CurrentWeatherHeader(weather = weather)
+            uiState.currentWeather?.let {
+                CurrentWeatherHeader(weather = weather)
+            }
 
             // Stündliche Vorhersage
             if (hourlyWeather.isNotEmpty()) {
@@ -396,7 +403,9 @@ private fun HourlyWeatherCard(weather: Weather) {
         modifier = Modifier.width(80.dp)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
