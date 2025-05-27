@@ -6,7 +6,7 @@ import com.example.climatecomparer.data.repository.impl.GeoLocationRepositoryImp
 import com.example.climatecomparer.data.repository.impl.WeatherRepositoryImpl
 import com.example.climatecomparer.data.repository.repointerface.GeoLocationRepositoryInterface
 import com.example.climatecomparer.data.repository.repointerface.WeatherRepositoryInterface
-import com.example.climatecomparer.ui.viewmodel.WeatherViewModel
+import com.example.climatecomparer.ui.detailmain.viewmodel.WeatherViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

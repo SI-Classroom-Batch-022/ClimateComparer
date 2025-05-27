@@ -1,10 +1,8 @@
-package com.example.climatecomparer.ui.viewmodel
+package com.example.climatecomparer.ui.detailmain.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.climatecomparer.data.model.City
-import com.example.climatecomparer.data.model.HourlyWeather
-import com.example.climatecomparer.data.model.Weather
 import com.example.climatecomparer.data.repository.repointerface.WeatherRepositoryInterface
 import com.example.climatecomparer.ui.helper.WeatherUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,14 +23,14 @@ class WeatherViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
 
             try {
-                val current = repository.getCurrentWeatherForCity(city)
+                val currentWeather = repository.getCurrentWeatherForCity(city)
                 val hourly = repository.getHourlyForecastForCity(city)
 
-                if (current != null && hourly != null) {
+                if (currentWeather != null && hourly != null) {
 
                     _uiState.update {
                         it.copy(
-                            currentWeather = current,
+                            currentWeather = currentWeather,
                             hourlyForecast = hourly,
                             isLoading = false
                         )

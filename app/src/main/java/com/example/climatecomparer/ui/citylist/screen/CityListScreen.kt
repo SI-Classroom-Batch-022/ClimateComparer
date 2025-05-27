@@ -1,23 +1,22 @@
-package com.example.climatecomparer.ui.screen
+package com.example.climatecomparer.ui.citylist.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.climatecomparer.data.model.City
 import com.example.climatecomparer.data.model.GeoLocation
+import com.example.climatecomparer.ui.citylist.component.FavoriteCityCard
+import com.example.climatecomparer.ui.citylist.component.SearchResultCard
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +39,7 @@ fun CityListScreen(
                 title = { Text("Städte") },
                 navigationIcon = {
                     IconButton(onClick = onBackPressed) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Zurück")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Zurück")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -131,7 +130,9 @@ fun CityListScreen(
                     }
 
                     item {
-                        Divider(modifier = Modifier.padding(vertical = 16.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
                     }
                 }
 
@@ -158,111 +159,3 @@ fun CityListScreen(
     }
 }
 
-@Composable
-private fun SearchResultCard(
-    geoLocation: GeoLocation,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = geoLocation.locationName ?: "Unbekannte Stadt",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = buildString {
-                        geoLocation.state?.let { append("$it, ") }
-                        geoLocation.countryCode?.let { append(it) }
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Icon(
-                Icons.Default.ArrowForward,
-                contentDescription = "Auswählen",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-
-@Composable
-private fun FavoriteCityCard(
-    city: City,
-    onClick: () -> Unit,
-    onToggleFavorite: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = city.geoLocation.locationName ?: "Unbekannte Stadt",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = buildString {
-                        city.geoLocation.state?.let { append("$it, ") }
-                        city.geoLocation.countryCode?.let { append(it) }
-                    },
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onToggleFavorite,
-                    modifier = Modifier.size(40.dp)
-                ) {
-                    Icon(
-                        if (city.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorit",
-                        tint = if (city.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Icon(
-                    Icons.Default.ArrowForward,
-                    contentDescription = "Auswählen",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-    }
-}

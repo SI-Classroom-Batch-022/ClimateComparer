@@ -1,4 +1,4 @@
-package com.example.climatecomparer.ui.preview
+package com.example.climatecomparer.data
 
 import com.example.climatecomparer.data.model.City
 import com.example.climatecomparer.data.model.GeoLocation
