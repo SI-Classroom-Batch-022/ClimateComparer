@@ -12,11 +12,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -34,12 +32,21 @@ import com.example.climatecomparer.ui.preview.dummyWeather
 import com.example.climatecomparer.ui.theme.ClimateComparerTheme
 import java.time.format.DateTimeFormatter
 
+enum class ForecastPeriod(val displayName: String, val days: Int) {
+    SEVEN_DAYS("7 Tage", 7),
+    FOURTEEN_DAYS("14 Tage", 14),
+    SIXTEEN_DAYS("16 Tage", 16)
+}
+
 @Composable
 fun DetailedMainScreen(
     weather: Weather,
     hourlyWeather: List<Weather> = emptyList(),
+    dailyWeather: List<Weather> = emptyList(),
     modifier: Modifier = Modifier
 ) {
+    var selectedForecastPeriod by remember { mutableStateOf(ForecastPeriod.SEVEN_DAYS) }
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -70,6 +77,164 @@ fun DetailedMainScreen(
 
             // Detaillierte Wetterinformationen
             WeatherDetailsSection(weather = weather)
+
+            // Forecast Period Switcher
+            if (dailyWeather.isNotEmpty()) {
+                ForecastPeriodSwitcher(
+                    selectedPeriod = selectedForecastPeriod,
+                    onPeriodSelected = { selectedForecastPeriod = it }
+                )
+
+                // Daily Forecast Section
+                DailyForecastSection(
+                    dailyWeather = dailyWeather,
+                    forecastPeriod = selectedForecastPeriod
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ForecastPeriodSwitcher(
+    selectedPeriod: ForecastPeriod,
+    onPeriodSelected: (ForecastPeriod) -> Unit
+) {
+    Column {
+        Text(
+            text = "Vorhersage",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+            color = Color.White
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ForecastPeriod.values().forEach { period ->
+                FilterChip(
+                    onClick = { onPeriodSelected(period) },
+                    label = {
+                        Text(
+                            text = period.displayName,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
+                    selected = selectedPeriod == period,
+                    colors = FilterChipDefaults.filterChipColors(
+                        containerColor = Color.White.copy(alpha = 0.2f),
+                        labelColor = Color.White,
+                        selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                        selectedLabelColor = Color.White
+                    ),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DailyForecastSection(
+    dailyWeather: List<Weather>,
+    forecastPeriod: ForecastPeriod
+) {
+    val filteredWeather = dailyWeather.take(forecastPeriod.days)
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        filteredWeather.forEach { weather ->
+            DailyWeatherCard(weather = weather)
+        }
+    }
+}
+
+@Composable
+private fun DailyWeatherCard(weather: Weather) {
+    SmallGlassmorphismCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Datum und Wochentag
+            Column(
+                modifier = Modifier.weight(2f)
+            ) {
+                Text(
+                    text = weather.timeStamp.format(DateTimeFormatter.ofPattern("EEE")),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White
+                )
+                Text(
+                    text = weather.timeStamp.format(DateTimeFormatter.ofPattern("dd.MM")),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+            }
+
+            // Wetter Icon und Beschreibung
+            Row(
+                modifier = Modifier.weight(3f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = getWeatherIcon(weather.weatherState),
+                    contentDescription = weather.weatherState.description,
+                    modifier = Modifier.size(24.dp),
+                    tint = getWeatherColor(weather.weatherState)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = weather.weatherState.description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.9f),
+                    maxLines = 1
+                )
+            }
+
+            // Temperatur und Niederschlag
+            Column(
+                modifier = Modifier.weight(2f),
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = "${weather.temperature.toInt()}°C",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+
+                if (weather.rainFall > 0) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Opacity,
+                            contentDescription = "Niederschlag",
+                            modifier = Modifier.size(12.dp),
+                            tint = Color.Blue
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "${weather.rainFall.toInt()}mm",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -161,67 +326,67 @@ private fun getBackgroundImageResource(weatherState: WeatherState): Int {
 @Composable
 private fun CurrentWeatherHeader(weather: Weather) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = weather.city.geoLocation.locationName ?: "Unbekannter Ort",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Medium,
-                color = Color.White
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = weather.city.geoLocation.locationName ?: "Unbekannter Ort",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Medium,
+            color = Color.White
+        )
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "${weather.temperature.toInt()}°C",
-                style = MaterialTheme.typography.displayLarge,
-                fontWeight = FontWeight.Light,
-                color = Color.White
-            )
+        Text(
+            text = "${weather.temperature.toInt()}°C",
+            style = MaterialTheme.typography.displayLarge,
+            fontWeight = FontWeight.Light,
+            color = Color.White
+        )
 
-            Text(
-                text = weather.weatherState.description,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White.copy(alpha = 0.9f)
-            )
+        Text(
+            text = weather.weatherState.description,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.White.copy(alpha = 0.9f)
+        )
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = weather.timeStamp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.8f)
-            )
-        }
+        Text(
+            text = weather.timeStamp.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.8f)
+        )
+    }
 
 }
 
 @Composable
 private fun HourlyWeatherSection(hourlyWeather: List<Weather>) {
 
-        Column {
-            Text(
-                text = "Stündliche Vorhersage",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                color = Color.White,
-            )
+    Column {
+        Text(
+            text = "Stündliche Vorhersage",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+            color = Color.White,
+        )
 
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                items(hourlyWeather) { weather ->
-                    HourlyWeatherCard(weather = weather)
-                }
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
+            items(hourlyWeather) { weather ->
+                HourlyWeatherCard(weather = weather)
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+    }
 
 }
 
@@ -334,12 +499,12 @@ private fun WeatherDetailCard(
 ) {
     SmallGlassmorphismCard(
         modifier = modifier
-            .height(120.dp) // Fixed height for all cards
+            .height(120.dp)
     ) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxSize(), // Fill the entire card space
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -357,7 +522,7 @@ private fun WeatherDetailCard(
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
                 color = Color.White.copy(alpha = 0.8f),
-                maxLines = 1 // Prevent text wrapping
+                maxLines = 1
             )
 
             Text(
@@ -494,13 +659,35 @@ private fun createHourlyWeatherData(): List<Weather> {
     }
 }
 
+// Preview-Daten für tägliche Vorhersage
+private fun createDailyWeatherData(): List<Weather> {
+    return (1..16).map { day ->
+        dummyWeather.copy(
+            temperature = dummyWeather.temperature + (Math.random() * 10 - 5),
+            timeStamp = dummyWeather.timeStamp.plusDays(day.toLong()),
+            rainFall = if (day % 3 == 0) Math.random() * 5 else 0.0,
+            weatherState = when (day % 8) {
+                0 -> WeatherState.SUNNY
+                1 -> WeatherState.PARTLY_CLOUDY
+                2 -> WeatherState.CLOUDY
+                3 -> WeatherState.RAINY
+                4 -> WeatherState.STORMY
+                5 -> WeatherState.SNOWY
+                6 -> WeatherState.FOGGY
+                else -> WeatherState.WINDY
+            }
+        )
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun DetailedMainScreenPreview() {
     ClimateComparerTheme {
         DetailedMainScreen(
             weather = dummyWeather,
-            hourlyWeather = createHourlyWeatherData()
+            hourlyWeather = createHourlyWeatherData(),
+            dailyWeather = createDailyWeatherData()
         )
     }
 }
