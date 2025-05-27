@@ -64,39 +64,49 @@ fun DetailedMainScreen(
             contentScale = ContentScale.Crop
         )
 
-        // Inhalt über dem Hintergrundbild
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .systemBarsPadding() // Für System UI
         ) {
-            // Aktuelles Wetter Header
-            uiState.currentWeather?.let {
-                CurrentWeatherHeader(weather = weather)
-            }
+            // Header außerhalb des Scrollbereichs für bessere Sichtbarkeit
+            CurrentWeatherHeader(
+                weather = weather,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
 
-            // Stündliche Vorhersage
-            if (hourlyWeather.isNotEmpty()) {
-                HourlyWeatherSection(hourlyWeather = hourlyWeather)
-            }
+            // Scrollbarer Inhalt
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Stündliche Vorhersage
+                if (hourlyWeather.isNotEmpty()) {
+                    HourlyWeatherSection(hourlyWeather = hourlyWeather)
+                }
 
-            // Detaillierte Wetterinformationen
-            WeatherDetailsSection(weather = weather)
+                // Detaillierte Wetterinformationen
+                WeatherDetailsSection(weather = weather)
 
-            // Forecast Period Switcher
-            if (dailyWeather.isNotEmpty()) {
-                ForecastPeriodSwitcher(
-                    selectedPeriod = selectedForecastPeriod,
-                    onPeriodSelected = { selectedForecastPeriod = it }
-                )
+                // Forecast Period Switcher
+                if (dailyWeather.isNotEmpty()) {
+                    ForecastPeriodSwitcher(
+                        selectedPeriod = selectedForecastPeriod,
+                        onPeriodSelected = { selectedForecastPeriod = it }
+                    )
 
-                // Daily Forecast Section
-                DailyForecastSection(
-                    dailyWeather = dailyWeather,
-                    forecastPeriod = selectedForecastPeriod
-                )
+                    // Daily Forecast Section
+                    DailyForecastSection(
+                        dailyWeather = dailyWeather,
+                        forecastPeriod = selectedForecastPeriod
+                    )
+                }
+
+                // Spacer am Ende für Navigation Bar
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
@@ -331,7 +341,7 @@ private fun getBackgroundImageResource(weatherState: WeatherState): Int {
 }
 
 @Composable
-private fun CurrentWeatherHeader(weather: Weather) {
+private fun CurrentWeatherHeader(weather: Weather, modifier: Modifier) {
 
     Column(
         modifier = Modifier
