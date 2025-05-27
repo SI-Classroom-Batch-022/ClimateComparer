@@ -18,7 +18,7 @@ val dummyWeather = Weather(
         isFavorite = true
     ),
     temperature = 21.5,
-    weatherState = WeatherState.PARTLY_CLOUDY,
+    weatherState = WeatherState.SUNNY,
     uvIndex = 5,
     rainFall = 0.0,
     windSpeed = 10.0,

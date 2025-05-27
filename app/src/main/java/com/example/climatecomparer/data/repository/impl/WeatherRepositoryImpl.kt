@@ -30,7 +30,9 @@ class WeatherRepositoryImpl(
                 weatherState = mapWeatherCodeToState(current.weatherCode),
                 windSpeed = current.windSpeed,
                 windDirection = current.windDirection,
-                timeStamp = LocalDateTime.parse(current.time)
+                timeStamp = LocalDateTime.parse(current.time),
+                uvIndex = 5,
+                rainFall = 0.0
             )
         } catch (e: Exception) {
             e.printStackTrace()

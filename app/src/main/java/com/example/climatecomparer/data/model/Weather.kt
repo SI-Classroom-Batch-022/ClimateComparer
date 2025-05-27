@@ -8,5 +8,7 @@ data class Weather (
     val weatherState: WeatherState,
     val windSpeed: Double,
     val windDirection: Double,
-    val timeStamp: LocalDateTime
+    val timeStamp: LocalDateTime,
+    val uvIndex: Int,
+    val rainFall: Double
 )
