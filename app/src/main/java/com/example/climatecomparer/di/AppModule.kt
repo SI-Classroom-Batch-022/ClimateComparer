@@ -6,12 +6,16 @@ import com.example.climatecomparer.data.repository.impl.GeoLocationRepositoryImp
 import com.example.climatecomparer.data.repository.impl.WeatherRepositoryImpl
 import com.example.climatecomparer.data.repository.repointerface.GeoLocationRepositoryInterface
 import com.example.climatecomparer.data.repository.repointerface.WeatherRepositoryInterface
+import com.example.climatecomparer.data.repository.impl.FavoritesRepositoryImpl
+import com.example.climatecomparer.data.repository.repointerface.FavoritesRepositoryInterface
+import com.example.climatecomparer.navigation.NavigationViewModel
 import com.example.climatecomparer.ui.detailmain.viewmodel.WeatherViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val appModule = module {
 
+    // API Services
     single {
         WeatherAPI.retrofitService
     }
@@ -20,6 +24,7 @@ val appModule = module {
         GeoLocationAPI.retrofitService
     }
 
+    // Repositories
     single<WeatherRepositoryInterface> {
         WeatherRepositoryImpl(get())
     }
@@ -28,5 +33,11 @@ val appModule = module {
         GeoLocationRepositoryImpl(get())
     }
 
+    single<FavoritesRepositoryInterface> {
+        FavoritesRepositoryImpl()
+    }
+
+    // ViewModels
     viewModelOf(::WeatherViewModel)
+    viewModelOf(::NavigationViewModel)
 }
