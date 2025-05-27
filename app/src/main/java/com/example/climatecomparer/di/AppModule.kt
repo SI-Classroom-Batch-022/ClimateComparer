@@ -1,0 +1,22 @@
+package com.example.climatecomparer.di
+
+import com.example.climatecomparer.data.remote.WeatherAPI
+import com.example.climatecomparer.data.repository.impl.WeatherRepositoryImpl
+import com.example.climatecomparer.data.repository.repointerface.WeatherRepositoryInterface
+import com.example.climatecomparer.ui.viewmodel.WeatherViewModel
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
+
+val appModule = module {
+
+    single {
+        WeatherAPI.retrofitService
+    }
+
+    single<WeatherRepositoryInterface> {
+        WeatherRepositoryImpl(get())
+    }
+
+    viewModelOf(::WeatherViewModel)
+
+}
