@@ -7,6 +7,7 @@ data class WeatherResponseCurrent(
     val longitude: Double,
     @Json(name = "current_weather")
     val currentWeather: CurrentWeatherData
+
 )
 
 data class CurrentWeatherData(

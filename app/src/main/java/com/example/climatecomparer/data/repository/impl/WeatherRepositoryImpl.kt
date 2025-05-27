@@ -21,8 +21,33 @@ class WeatherRepositoryImpl(
         return try {
             val lat = city.geoLocation.latitude
             val lon = city.geoLocation.longitude
+
+            // Current weather abrufen
             val response = apiSource.getCurrentWeather(lat, lon)
             val current = response.currentWeather
+
+            // Hourly weather für zusätzliche Daten abrufen
+            val hourlyResponse = apiSource.getHourlyWeather(lat, lon)
+            val hourlyData = hourlyResponse.hourlyWeather
+
+            // UV-Index und Niederschlag aus den stündlichen Daten extrahieren
+            val currentHourIndex = hourlyData.time.indexOfFirst { timeStr ->
+                val hourTime = LocalDateTime.parse(timeStr)
+                val currentTime = LocalDateTime.parse(current.time)
+                hourTime.hour == currentTime.hour && hourTime.toLocalDate() == currentTime.toLocalDate()
+            }
+
+            val uvIndex = if (currentHourIndex >= 0) {
+                hourlyData.uvIndex[currentHourIndex].toInt()
+            } else {
+                hourlyData.uvIndex.firstOrNull()?.toInt() ?: 0
+            }
+
+            val rainFall = if (currentHourIndex >= 0) {
+                hourlyData.rainFall[currentHourIndex]
+            } else {
+                hourlyData.rainFall.firstOrNull() ?: 0.0
+            }
 
             Weather(
                 city = city,
@@ -31,8 +56,8 @@ class WeatherRepositoryImpl(
                 windSpeed = current.windSpeed,
                 windDirection = current.windDirection,
                 timeStamp = LocalDateTime.parse(current.time),
-                uvIndex = 5,
-                rainFall = 0.0
+                uvIndex = uvIndex,
+                rainFall = rainFall
             )
         } catch (e: Exception) {
             e.printStackTrace()
