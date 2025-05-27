@@ -1,7 +1,5 @@
 package com.example.climatecomparer.data.repository.impl
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.climatecomparer.data.model.City
 import com.example.climatecomparer.data.model.Weather
 import com.example.climatecomparer.data.model.WeatherState
@@ -9,6 +7,8 @@ import com.example.climatecomparer.data.remote.WeatherAPIService
 import com.example.climatecomparer.data.repository.repointerface.WeatherRepositoryInterface
 import java.time.LocalDateTime
 import com.example.climatecomparer.data.model.GeoLocation
+import com.example.climatecomparer.data.model.HourlyWeather
+import com.example.climatecomparer.data.model.HourlyWeatherData
 import com.example.climatecomparer.data.remote.GeoLocationAPI
 import com.example.climatecomparer.data.remote.WeatherAPI
 import kotlinx.coroutines.runBlocking
@@ -17,7 +17,6 @@ class WeatherRepositoryImpl(
     private val apiSource: WeatherAPIService
 ) : WeatherRepositoryInterface {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getCurrentWeatherForCity(city: City): Weather? {
         return try {
             val lat = city.geoLocation.latitude
@@ -29,10 +28,8 @@ class WeatherRepositoryImpl(
                 city = city,
                 temperature = current.temperature,
                 weatherState = mapWeatherCodeToState(current.weatherCode),
-                uvIndex = current.uvIndex.toInt(),
                 windSpeed = current.windSpeed,
                 windDirection = current.windDirection,
-                rainFall = current.precipitation,
                 timeStamp = LocalDateTime.parse(current.time)
             )
         } catch (e: Exception) {
@@ -41,7 +38,30 @@ class WeatherRepositoryImpl(
         }
     }
 
-    override suspend fun getCurrentWeatherForCoordinates(latitude: Double, longitude: Double): Weather? {
+
+    override suspend fun getHourlyForecastForCity(city: City): List<HourlyWeather>? {
+        return try {
+            val lat = city.geoLocation.latitude
+            val lon = city.geoLocation.longitude
+            val hourlyResponse = apiSource.getHourlyWeather(lat, lon)
+            val hourly = hourlyResponse.hourlyWeather
+
+            mapHourlyDataToList(hourly)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+
+    override suspend fun getDailyForecastForCity(city: City): Weather? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getCurrentWeatherForCoordinates(
+        latitude: Double,
+        longitude: Double
+    ): Weather? {
         TODO("Not yet implemented")
     }
 
@@ -57,15 +77,30 @@ class WeatherRepositoryImpl(
             else -> WeatherState.CLOUDY
         }
     }
+
+
+    fun mapHourlyDataToList(hourly: HourlyWeatherData): List<HourlyWeather> {
+        return hourly.time.indices.map { weatherNow ->
+            HourlyWeather(
+                time = hourly.time[weatherNow],
+                temperature = hourly.temperature[weatherNow],
+                weatherCode = hourly.weatherCode[weatherNow],
+                uvIndex = hourly.uvIndex[weatherNow],
+                windSpeed = hourly.windSpeed[weatherNow],
+                windDirection = hourly.windDirection[weatherNow],
+                precipitation = hourly.rainFall[weatherNow]
+            )
+        }
+    }
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
+
+
 fun main() = runBlocking {
     val cityName = "München"
 
     try {
-
         val geoResponse = GeoLocationAPI.retrofitService.searchCityByName(cityName)
         val geoLocation: GeoLocation? = geoResponse.results?.firstOrNull()
 
@@ -74,27 +109,43 @@ fun main() = runBlocking {
             return@runBlocking
         }
 
-
         val city = City(
-            geoLocation = geoLocation,
+            geoLocation = geoLocation.copy(locationName = cityName),
             isFavorite = false
         )
 
-
         val weatherRepository = WeatherRepositoryImpl(apiSource = WeatherAPI.retrofitService)
-        val weather = weatherRepository.getCurrentWeatherForCity(city)
 
-        if (weather != null) {
-            println("Wetter in ${city.geoLocation.locationName ?: "Unbekannte Stadt"}:")
-            println("  Temperatur: ${weather.temperature}°C")
-            println("  Zustand: ${weather.weatherState.description}")
-            println("  UV-Index: ${weather.uvIndex}")
-            println("  Wind: ${weather.windSpeed} km/h aus ${weather.windDirection}°")
-            println("  Niederschlag: ${weather.rainFall} mm")
-            println("  Zeitstempel: ${weather.timeStamp}")
+        // Aktuelles Wetter abrufen
+        val currentWeather = weatherRepository.getCurrentWeatherForCity(city)
+
+        if (currentWeather != null) {
+            println("Aktuelles Wetter in ${city.geoLocation.locationName ?: "Unbekannte Stadt"}:")
+            println("  Temperatur: ${currentWeather.temperature}°C")
+            println("  Zustand: ${currentWeather.weatherState.description}")
+            println("  Wind: ${currentWeather.windSpeed} km/h aus ${currentWeather.windDirection}°")
+            println("  Zeitstempel: ${currentWeather.timeStamp}")
         } else {
-            println("Fehler beim Abrufen des Wetters für ${city.geoLocation.locationName}")
+            println("Fehler beim Abrufen des aktuellen Wetters für ${city.geoLocation.locationName}")
         }
+
+        // Stündliche Vorhersage abrufen
+        val hourlyForecast = weatherRepository.getHourlyForecastForCity(city)
+
+        if (!hourlyForecast.isNullOrEmpty()) {
+            println("\nStündliche Wettervorhersage:")
+            hourlyForecast.take(6).forEach { hour ->
+                println("  Zeit: ${hour.time}")
+                println("    Temperatur: ${hour.temperature}°C")
+                println("    Wettercode: ${hour.weatherCode}")
+                println("    UV-Index: ${hour.uvIndex}")
+                println("    Wind: ${hour.windSpeed} km/h aus ${hour.windDirection}°")
+                println("    Niederschlag: ${hour.precipitation} mm")
+            }
+        } else {
+            println("Keine stündliche Wettervorhersage verfügbar.")
+        }
+
     } catch (e: Exception) {
         println("Fehler bei der Ausführung: ${e.message}")
     }

@@ -1,6 +1,7 @@
 package com.example.climatecomparer.data.remote
 
-import com.example.climatecomparer.data.model.WeatherResponse
+import com.example.climatecomparer.data.model.WeatherResponseCurrent
+import com.example.climatecomparer.data.model.WeatherResponseHourly
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -28,8 +29,17 @@ interface WeatherAPIService {
     suspend fun getCurrentWeather(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,
-        @Query("current") current: String = "temperature_2m,weather_code,uv_index,wind_speed_10m,wind_direction_10m,precipitation"
-    ): WeatherResponse
+        @Query("current_weather") currentWeather: Boolean = true,
+        @Query("timezone") timezone: String = "auto"
+    ): WeatherResponseCurrent
+
+    @GET("forecast")
+    suspend fun getHourlyWeather(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("hourly") hourly: String = "temperature_2m,weathercode,uv_index,wind_speed_10m,wind_direction_10m,precipitation",
+        @Query("timezone") timezone: String = "auto"
+    ): WeatherResponseHourly
 }
 
 object WeatherAPI {
