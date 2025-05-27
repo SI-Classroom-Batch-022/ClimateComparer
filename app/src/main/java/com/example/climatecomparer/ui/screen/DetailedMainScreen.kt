@@ -231,8 +231,9 @@ private fun HourlyWeatherCard(weather: Weather) {
         modifier = Modifier.width(80.dp)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(12.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = weather.timeStamp.format(DateTimeFormatter.ofPattern("HH:mm")),
@@ -335,8 +336,11 @@ private fun WeatherDetailCard(
         modifier = modifier
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(), // Ensures the column takes full width
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = icon,
