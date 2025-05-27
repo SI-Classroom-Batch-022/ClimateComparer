@@ -28,6 +28,7 @@ fun CityListScreen(
     onSearchCity: suspend (String) -> List<GeoLocation>,
     onToggleFavorite: (City) -> Unit,
     modifier: Modifier = Modifier
+
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<GeoLocation>>(emptyList()) }
