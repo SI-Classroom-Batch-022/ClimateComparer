@@ -30,6 +30,14 @@ interface WeatherAPIService {
         @Query("longitude") longitude: Double,
         @Query("current") current: String = "temperature_2m,weather_code,uv_index,wind_speed_10m,wind_direction_10m,precipitation"
     ): WeatherResponse
+
+    @GET("forecast")
+    suspend fun getHourlyWeather(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("hourly") hourly: String = "temperature_2m,weather_code,uv_index,wind_speed_10m,wind_direction_10m,precipitation",
+        @Query("timezone") timezone: String = "auto"
+    ): WeatherResponse
 }
 
 object WeatherAPI {
