@@ -85,7 +85,7 @@ fun main() = runBlocking {
         val weather = weatherRepository.getCurrentWeatherForCity(city)
 
         if (weather != null) {
-            println("Wetter in ${city.geoLocation.name ?: "Unbekannte Stadt"}:")
+            println("Wetter in ${city.geoLocation.locationName ?: "Unbekannte Stadt"}:")
             println("  Temperatur: ${weather.temperature}°C")
             println("  Zustand: ${weather.weatherState.description}")
             println("  UV-Index: ${weather.uvIndex}")
@@ -93,7 +93,7 @@ fun main() = runBlocking {
             println("  Niederschlag: ${weather.rainFall} mm")
             println("  Zeitstempel: ${weather.timeStamp}")
         } else {
-            println("Fehler beim Abrufen des Wetters für ${city.geoLocation.name}")
+            println("Fehler beim Abrufen des Wetters für ${city.geoLocation.locationName}")
         }
     } catch (e: Exception) {
         println("Fehler bei der Ausführung: ${e.message}")

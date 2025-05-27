@@ -16,8 +16,8 @@ abstract class GeoLocationRepositoryImpl(
                 ?: GeoLocation(
                     latitude = 0.0,
                     longitude = 0.0,
-                    name = null,
-                    country = null,
+                    locationName = null,
+                    countryCode = null,
                     state = null
                 )
         } catch (e: Exception) {
@@ -25,8 +25,8 @@ abstract class GeoLocationRepositoryImpl(
             GeoLocation(
                 latitude = 0.0,
                 longitude = 0.0,
-                name = null,
-                country = null,
+                locationName = null,
+                countryCode = null,
                 state = null
             )
         }
