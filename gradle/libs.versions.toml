@@ -12,6 +12,8 @@ moshiVersion = "1.15.0"
 navigationCompose = "2.9.0"
 retrofitVersion = "2.11.0"
 koinBom = "4.1.0-Beta4"
+roomRuntime = "2.6.0"
+kspVersion = "2.0.21-1.0.25"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,9 +39,12 @@ koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-android = { module = "io.insert-koin:koin-android" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomRuntime" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomRuntime" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
