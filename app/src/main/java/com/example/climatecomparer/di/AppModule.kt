@@ -45,7 +45,7 @@ val appModule = module {
     }
 
     single<FavoriteCitiesRepositoryInterface> {
-        FavoriteCitiesRepositoryImpl()
+        FavoriteCitiesRepositoryImpl(get())
     }
 
     // ViewModels
