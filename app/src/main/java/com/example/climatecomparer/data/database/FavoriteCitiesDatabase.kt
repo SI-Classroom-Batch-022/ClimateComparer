@@ -8,7 +8,7 @@ import com.example.climatecomparer.data.model.FavoriteCity
 
 @Database(entities = [FavoriteCity::class], version = 1, exportSchema = false)
 abstract class FavoriteCitiesDatabase : RoomDatabase() {
-    abstract fun favoriteDao(): FavoriteDao
+    abstract fun favoriteDao(): FavoriteCitiesDao
 
     companion object {
         @Volatile

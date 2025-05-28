@@ -10,7 +10,7 @@ import com.example.climatecomparer.data.model.FavoriteCity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FavoriteDao {
+interface FavoriteCitiesDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert (favoriteCity: FavoriteCity)

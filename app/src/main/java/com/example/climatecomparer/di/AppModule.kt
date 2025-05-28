@@ -7,8 +7,8 @@ import com.example.climatecomparer.data.repository.impl.GeoLocationRepositoryImp
 import com.example.climatecomparer.data.repository.impl.WeatherRepositoryImpl
 import com.example.climatecomparer.data.repository.repointerface.GeoLocationRepositoryInterface
 import com.example.climatecomparer.data.repository.repointerface.WeatherRepositoryInterface
-import com.example.climatecomparer.data.repository.impl.FavoritesRepositoryImpl
-import com.example.climatecomparer.data.repository.repointerface.FavoritesRepositoryInterface
+import com.example.climatecomparer.data.repository.impl.FavoriteCitiesRepositoryImpl
+import com.example.climatecomparer.data.repository.repointerface.FavoriteCitiesRepositoryInterface
 import com.example.climatecomparer.navigation.NavigationViewModel
 import com.example.climatecomparer.ui.detailmain.viewmodel.WeatherViewModel
 import org.koin.android.ext.koin.androidContext
@@ -44,8 +44,8 @@ val appModule = module {
         GeoLocationRepositoryImpl(get())
     }
 
-    single<FavoritesRepositoryInterface> {
-        FavoritesRepositoryImpl()
+    single<FavoriteCitiesRepositoryInterface> {
+        FavoriteCitiesRepositoryImpl()
     }
 
     // ViewModels

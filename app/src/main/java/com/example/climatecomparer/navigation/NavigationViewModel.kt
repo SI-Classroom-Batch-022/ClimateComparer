@@ -4,14 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.climatecomparer.data.model.City
 import com.example.climatecomparer.data.model.GeoLocation
-import com.example.climatecomparer.data.repository.repointerface.FavoritesRepositoryInterface
+import com.example.climatecomparer.data.repository.repointerface.FavoriteCitiesRepositoryInterface
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class NavigationViewModel(
-    private val favoritesRepository: FavoritesRepositoryInterface
+    private val favoritesRepository: FavoriteCitiesRepositoryInterface
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NavigationUiState())
