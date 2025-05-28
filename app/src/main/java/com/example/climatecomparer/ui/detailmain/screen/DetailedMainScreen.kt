@@ -55,9 +55,9 @@ fun DetailedMainScreen(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        // Hintergrundbild basierend auf Wetterzustand
+        // Hintergrundbild basierend auf Wetterzustand - FIXED: Pass the weather timestamp
         Image(
-            painter = painterResource(id = getBackgroundImageResource(weather.weatherState)),
+            painter = painterResource(id = getBackgroundImageResource(weather.weatherState, weather.timeStamp)),
             contentDescription = "Weather background",
             modifier = Modifier
                 .fillMaxSize(),
@@ -130,8 +130,8 @@ fun DetailedMainScreen(
     }
 }
 
-// Funktion zur Auswahl des Hintergrundbildes basierend auf WeatherState
-fun getBackgroundImageResource(weatherState: WeatherState, timestamp: LocalDateTime = LocalDateTime.now()): Int {
+// FIXED: Remove default parameter to force explicit timestamp passing
+fun getBackgroundImageResource(weatherState: WeatherState, timestamp: LocalDateTime): Int {
     val hour = timestamp.hour
     val isNight = hour < 6 || hour >= 20 // Nacht zwischen 20:00 und 06:00
 
