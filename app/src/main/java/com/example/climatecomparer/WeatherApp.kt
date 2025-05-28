@@ -68,22 +68,39 @@ private fun convertHourlyToWeatherList(
     hourlyForecast: List<HourlyWeather>,
     city: City
 ): List<Weather> {
-    return hourlyForecast.take(24).map { hourly ->
-        Weather(
-            city = city,
-            temperature = hourly.temperature,
-            weatherState = mapWeatherCodeToState(hourly.weatherCode),
-            windSpeed = hourly.windSpeed,
-            windDirection = hourly.windDirection,
-            timeStamp = try {
-                LocalDateTime.parse(hourly.time)
+    val now = LocalDateTime.now()
+
+    return hourlyForecast
+        .filter { hourly ->
+            try {
+                val hourlyTime = LocalDateTime.parse(hourly.time)
+                hourlyTime.isAfter(now) || hourlyTime.isEqual(now)
             } catch (e: Exception) {
-                LocalDateTime.parse(hourly.time, DateTimeFormatter.ISO_DATE_TIME)
-            },
-            uvIndex = hourly.uvIndex.toInt(),
-            rainFall = hourly.precipitation
-        )
-    }
+                try {
+                    val hourlyTime = LocalDateTime.parse(hourly.time, DateTimeFormatter.ISO_DATE_TIME)
+                    hourlyTime.isAfter(now) || hourlyTime.isEqual(now)
+                } catch (e2: Exception) {
+                    false
+                }
+            }
+        }
+        .take(24)
+        .map { hourly ->
+            Weather(
+                city = city,
+                temperature = hourly.temperature,
+                weatherState = mapWeatherCodeToState(hourly.weatherCode),
+                windSpeed = hourly.windSpeed,
+                windDirection = hourly.windDirection,
+                timeStamp = try {
+                    LocalDateTime.parse(hourly.time)
+                } catch (e: Exception) {
+                    LocalDateTime.parse(hourly.time, DateTimeFormatter.ISO_DATE_TIME)
+                },
+                uvIndex = hourly.uvIndex.toInt(),
+                rainFall = hourly.precipitation
+            )
+        }
 }
 
 private fun createDailyFromHourly(
