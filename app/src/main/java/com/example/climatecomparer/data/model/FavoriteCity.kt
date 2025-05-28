@@ -6,14 +6,12 @@ import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-@Entity(tableName = "favoriteCitys")
-data class FavoriteCity (
-
+@Entity(tableName = "favoriteCities")
+data class FavoriteCity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val geoLocation: GeoLocation
 )
-
 
 class GeoLocationConverter {
     private val moshi = Moshi.Builder()

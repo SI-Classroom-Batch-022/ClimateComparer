@@ -24,15 +24,13 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityListScreen(
+    favoritesCities: List<City>,
     onCitySelected: (City) -> Unit,
     onBackPressed: () -> Unit,
     onSearchCity: suspend (String) -> List<GeoLocation>,
     onToggleFavorite: (City) -> Unit,
-    modifier: Modifier = Modifier,
-    favoriteCitiesViewModel: FavoriteCitiesViewModel = koinViewModel()
-
+    modifier: Modifier = Modifier
 ) {
-    val favoriteCities by favoriteCitiesViewModel.favoritesCities.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<GeoLocation>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
@@ -121,14 +119,28 @@ fun CityListScreen(
                     }
 
                     items(searchResults) { geoLocation ->
+                        // Prüfen ob diese Stadt bereits in Favoriten ist
+                        val isFavorite = favoritesCities.any { city ->
+                            city.geoLocation.latitude == geoLocation.latitude &&
+                                    city.geoLocation.longitude == geoLocation.longitude
+                        }
+
                         SearchResultCard(
                             geoLocation = geoLocation,
+                            isFavorite = isFavorite,
                             onClick = {
                                 val city = City(
                                     geoLocation = geoLocation,
-                                    isFavorite = false
+                                    isFavorite = isFavorite
                                 )
                                 onCitySelected(city)
+                            },
+                            onToggleFavorite = {
+                                val city = City(
+                                    geoLocation = geoLocation,
+                                    isFavorite = isFavorite
+                                )
+                                onToggleFavorite(city)
                             }
                         )
                     }
@@ -141,7 +153,7 @@ fun CityListScreen(
                 }
 
                 // Favoriten
-                if (favoriteCities.isNotEmpty()) {
+                if (favoritesCities.isNotEmpty()) {
                     item {
                         Text(
                             "Favoriten",
@@ -150,11 +162,24 @@ fun CityListScreen(
                         )
                     }
 
-                    items(favoriteCities) { city ->
+                    items(favoritesCities) { city ->
+                        // Convert City to FavoriteCity for the card
+                        val favoriteCity = com.example.climatecomparer.data.model.FavoriteCity(
+                            geoLocation = city.geoLocation
+                        )
                         FavoriteCityCard(
-                            favoriteCity = city,
+                            favoriteCity = favoriteCity,
                             onClick = { onCitySelected(city) },
                             onToggleFavorite = { onToggleFavorite(city) }
+                        )
+                    }
+                } else if (searchResults.isEmpty() && searchQuery.isEmpty()) {
+                    item {
+                        Text(
+                            "Keine Favoriten vorhanden",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
                 }
@@ -162,4 +187,3 @@ fun CityListScreen(
         }
     }
 }
-

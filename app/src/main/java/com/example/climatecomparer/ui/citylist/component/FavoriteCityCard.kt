@@ -34,7 +34,7 @@ fun FavoriteCityCard(
     onToggleFavorite: () -> Unit
 ) {
     Card(
-        modifier = Modifier.Companion
+        modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
@@ -43,22 +43,22 @@ fun FavoriteCityCard(
         )
     ) {
         Row(
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalAlignment = Alignment.Companion.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.Companion.weight(1f)) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = favoriteCity.geoLocation.locationName ?: "Unbekannte Stadt",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Companion.Medium
+                    fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = buildString {
                         favoriteCity.geoLocation.state?.let { append("$it, ") }
-                        city.geoLocation.countryCode?.let { append(it) }
+                        favoriteCity.geoLocation.countryCode?.let { append(it) }
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -67,16 +67,16 @@ fun FavoriteCityCard(
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.Companion.CenterVertically
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
                     onClick = onToggleFavorite,
-                    modifier = Modifier.Companion.size(40.dp)
+                    modifier = Modifier.size(40.dp)
                 ) {
                     Icon(
-                        if (city.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorit",
-                        tint = if (city.isFavorite) Color.Companion.Red else MaterialTheme.colorScheme.onSurfaceVariant
+                        Icons.Default.Favorite, // Always show filled heart for favorite cities
+                        contentDescription = "Favorit entfernen",
+                        tint = Color.Red
                     )
                 }
 

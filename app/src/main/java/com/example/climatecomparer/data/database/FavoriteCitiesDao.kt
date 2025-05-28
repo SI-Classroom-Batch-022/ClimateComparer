@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.Flow
 interface FavoriteCitiesDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert (favoriteCity: FavoriteCity)
+    suspend fun insert(favoriteCity: FavoriteCity)
 
-    @Query("SELECT * from favoriteCitys ORDER BY id ASC")
+    @Query("SELECT * FROM favoriteCities ORDER BY id ASC")
     fun getAllFavoriteCities(): Flow<List<FavoriteCity>>
 
     @Delete
@@ -24,4 +24,9 @@ interface FavoriteCitiesDao {
     @Update
     suspend fun update(favoriteCity: FavoriteCity)
 
+    @Query("DELETE FROM favoriteCities WHERE geoLocation = :geoLocationJson")
+    suspend fun deleteByGeoLocation(geoLocationJson: String)
+
+    @Query("SELECT * FROM favoriteCities WHERE geoLocation = :geoLocationJson LIMIT 1")
+    suspend fun findByGeoLocation(geoLocationJson: String): FavoriteCity?
 }

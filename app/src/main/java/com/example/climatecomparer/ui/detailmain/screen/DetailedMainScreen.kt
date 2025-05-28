@@ -7,7 +7,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,7 +45,8 @@ fun DetailedMainScreen(
     hourlyWeather: List<Weather> = emptyList(),
     dailyWeather: List<Weather> = emptyList(),
     modifier: Modifier = Modifier,
-    weatherViewModel: WeatherViewModel = koinViewModel()
+    weatherViewModel: WeatherViewModel = koinViewModel(),
+    onToggleFavorite: ((Weather) -> Unit)? = null
 ) {
     var selectedForecastPeriod by remember { mutableStateOf(ForecastPeriod.SEVEN_DAYS) }
 
@@ -50,9 +55,9 @@ fun DetailedMainScreen(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        // Hintergrundbild basierend auf Wetterzustand UND Tageszeit
+        // Hintergrundbild basierend auf Wetterzustand
         Image(
-            painter = painterResource(id = getBackgroundImageResource(weather.weatherState, weather.timeStamp)),
+            painter = painterResource(id = getBackgroundImageResource(weather.weatherState)),
             contentDescription = "Weather background",
             modifier = Modifier
                 .fillMaxSize(),
@@ -102,6 +107,24 @@ fun DetailedMainScreen(
 
                 // Spacer am Ende für Navigation Bar
                 Spacer(modifier = Modifier.height(80.dp))
+            }
+        }
+
+        // Optional: Favoriten-Button für aktuelle Stadt
+        if (onToggleFavorite != null) {
+            FloatingActionButton(
+                onClick = { onToggleFavorite(weather) },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .systemBarsPadding()
+                    .padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+            ) {
+                Icon(
+                    if (weather.city.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = if (weather.city.isFavorite) "Aus Favoriten entfernen" else "Zu Favoriten hinzufügen",
+                    tint = if (weather.city.isFavorite) Color.Red else Color.White
+                )
             }
         }
     }
@@ -166,24 +189,6 @@ fun getWeatherIconResource(weatherState: WeatherState, timestamp: LocalDateTime)
         WeatherState.SNOWY -> R.drawable.snow
         WeatherState.FOGGY -> R.drawable.fog
         WeatherState.WINDY -> R.drawable.windy
-    }
-}
-
-// Alte Icon-Funktion entfernt, da wir jetzt custom Icons verwenden
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun getWeatherIcon(weatherState: WeatherState): ImageVector {
-    // Diese Funktion wird nicht mehr verwendet, aber bleibt für Kompatibilität
-    // Falls Sie sie noch irgendwo verwenden
-    return when (weatherState) {
-        WeatherState.SUNNY -> Icons.Filled.WbSunny
-        WeatherState.PARTLY_CLOUDY -> Icons.Default.WbCloudy
-        WeatherState.CLOUDY -> Icons.Default.Cloud
-        WeatherState.RAINY -> Icons.Default.Umbrella
-        WeatherState.STORMY -> Icons.Default.Thunderstorm
-        WeatherState.SNOWY -> Icons.Default.AcUnit
-        WeatherState.FOGGY -> Icons.Default.CloudQueue
-        WeatherState.WINDY -> Icons.Default.Air
     }
 }
 

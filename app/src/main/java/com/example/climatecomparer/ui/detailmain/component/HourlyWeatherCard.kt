@@ -20,8 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.climatecomparer.data.model.Weather
-import com.example.climatecomparer.ui.detailmain.screen.getWeatherColor
-import com.example.climatecomparer.ui.detailmain.screen.getWeatherIcon
 import com.example.climatecomparer.ui.detailmain.screen.getWeatherIconResource
 import java.time.format.DateTimeFormatter
 

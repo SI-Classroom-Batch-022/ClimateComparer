@@ -12,4 +12,9 @@ interface FavoriteCitiesRepositoryInterface {
 
     suspend fun removeFavoriteCity(favoriteCity: FavoriteCity)
 
+    suspend fun getFavoriteCities(): List<City>
+
+    suspend fun isCityFavorite(city: City): Boolean
+
+    suspend fun toggleFavorite(city: City)
 }

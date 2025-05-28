@@ -30,7 +30,7 @@ class NavigationViewModel(
                 longitude = 13.405,
                 countryCode = "DE",
             ),
-            isFavorite = true
+            isFavorite = false
         )
         _uiState.value = _uiState.value.copy(currentCity = defaultCity)
     }
@@ -57,12 +57,8 @@ class NavigationViewModel(
     fun toggleFavorite(city: City) {
         viewModelScope.launch {
             try {
-                if (city.isFavorite) {
-                    favoritesRepository.removeFavoriteCity(city.toString())
-                } else {
-                    favoritesRepository.addFavoriteCity(city.copy(isFavorite = true).toString())
-                }
-                loadFavorites()
+                favoritesRepository.toggleFavorite(city)
+                loadFavorites() // Refresh the favorites list
             } catch (e: Exception) {
                 // Fehlerbehandlung
             }

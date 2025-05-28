@@ -31,7 +31,6 @@ class WeatherViewModel(
                 val hourly = weatherRepository.getHourlyForecastForCity(city)
 
                 if (currentWeather != null && hourly != null) {
-
                     _uiState.update {
                         it.copy(
                             currentWeather = currentWeather,
@@ -61,10 +60,10 @@ class WeatherViewModel(
         }
     }
 
+    // KORRIGIERT: Verwendet geoLocation statt name
     fun convertCityToFavoriteCity(city: City): FavoriteCity {
         return FavoriteCity(
-            name = city.geoLocation.locationName.toString()
+            geoLocation = city.geoLocation
         )
     }
-
 }
