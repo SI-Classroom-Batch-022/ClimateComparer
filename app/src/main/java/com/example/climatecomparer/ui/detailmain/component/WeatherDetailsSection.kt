@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.climatecomparer.data.model.Weather
 import com.example.climatecomparer.ui.detailmain.screen.getUVIndexColor
-import com.example.climatecomparer.ui.detailmain.screen.getWindDirection
 
 @Composable
 fun WeatherDetailsSection(weather: Weather) {
@@ -28,20 +27,20 @@ fun WeatherDetailsSection(weather: Weather) {
         Text(
             text = "Wetterdetails",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Companion.Medium,
-            color = Color.Companion.White
+            fontWeight = FontWeight.Medium,
+            color = Color.White
         )
 
         // Erste Reihe: Wind und UV-Index
         Row(
-            modifier = Modifier.Companion.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             WeatherDetailCard(
                 title = "Windgeschwindigkeit",
-                value = "${weather.windSpeed} km/h",
+                value = "${weather.windSpeed.toInt()} km/h",
                 icon = Icons.Default.Air,
-                modifier = Modifier.Companion.weight(1f)
+                modifier = Modifier.weight(1f)
             )
 
             WeatherDetailCard(
@@ -49,33 +48,47 @@ fun WeatherDetailsSection(weather: Weather) {
                 value = weather.uvIndex.toString(),
                 icon = Icons.Default.WbSunny,
                 valueColor = getUVIndexColor(weather.uvIndex),
-                modifier = Modifier.Companion.weight(1f)
+                modifier = Modifier.weight(1f)
             )
         }
 
-        // Zweite Reihe: Windrichtung und Niederschlag
+        // Zweite Reihe: Windrichtung mit Kompass und Niederschlag
         Row(
-            modifier = Modifier.Companion.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            // Verwende die neue WindDirectionCard oder die aktualisierte WeatherDetailCard
+            WindDirectionCard(
+                windDirection = weather.windDirection,
+                windSpeed = weather.windSpeed,
+                modifier = Modifier.weight(1f)
+            )
+
+            // Alternativ: Die aktualisierte WeatherDetailCard verwenden
+            /*
             WeatherDetailCard(
                 title = "Windrichtung",
                 value = "${weather.windDirection.toInt()}°",
                 subtitle = getWindDirection(weather.windDirection),
                 icon = Icons.Default.Navigation,
-                modifier = Modifier.Companion.weight(1f)
+                windDirection = weather.windDirection, // Hier wird die Windrichtung übergeben
+                modifier = Modifier.weight(1f)
             )
+            */
 
             WeatherDetailCard(
                 title = "Niederschlag",
-                value = "${weather.rainFall} mm",
+                value = "${weather.rainFall.toInt()} mm",
                 icon = Icons.Default.Opacity,
-                valueColor = if (weather.rainFall > 0) Color.Companion.Blue else Color.Companion.White,
-                modifier = Modifier.Companion.weight(1f)
+                valueColor = if (weather.rainFall > 0) Color.Blue else Color.White,
+                modifier = Modifier.weight(1f)
             )
         }
 
-        // Wetterzustand Detail-Karte
-        WeatherStateDetailCard(weatherState = weather.weatherState)
+        // Wetterzustand Detail-Karte mit Zeitstempel für Tag/Nacht-Unterscheidung
+        WeatherStateDetailCard(
+            weatherState = weather.weatherState,
+            timestamp = weather.timeStamp
+        )
     }
 }

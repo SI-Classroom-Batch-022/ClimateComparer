@@ -181,20 +181,6 @@ fun getUVIndexColor(uvIndex: Int): Color {
     }
 }
 
-fun getWindDirection(degrees: Double): String {
-    return when ((degrees / 45).toInt() % 8) {
-        0 -> "N"
-        1 -> "NO"
-        2 -> "O"
-        3 -> "SO"
-        4 -> "S"
-        5 -> "SW"
-        6 -> "W"
-        7 -> "NW"
-        else -> "N"
-    }
-}
-
 // Preview-Daten für stündliche Vorhersage
 private fun createHourlyWeatherData(): List<Weather> {
     return (1..12).map { hour ->
