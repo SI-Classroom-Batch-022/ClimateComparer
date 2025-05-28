@@ -27,6 +27,7 @@ import com.example.climatecomparer.ui.detailmain.component.WeatherDetailsSection
 import com.example.climatecomparer.ui.theme.ClimateComparerTheme
 import com.example.climatecomparer.ui.detailmain.viewmodel.WeatherViewModel
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDateTime
 
 enum class ForecastPeriod(val displayName: String, val days: Int) {
     SEVEN_DAYS("7 Tage", 7),
@@ -120,10 +121,36 @@ fun getBackgroundImageResource(weatherState: WeatherState): Int {
     }
 }
 
-// Hilfsfunktionen für Icons und Farben
+// Neue Funktion für custom Weather Icons mit Tag/Nacht-Unterscheidung
+fun getWeatherIconResource(weatherState: WeatherState, timestamp: LocalDateTime): Int {
+    val hour = timestamp.hour
+    val isNight = hour < 6 || hour >= 20 // Nacht zwischen 20:00 und 06:00
+
+    return when (weatherState) {
+        WeatherState.SUNNY -> {
+            if (isNight) R.drawable.night_clear_sky else R.drawable.sun
+        }
+        WeatherState.PARTLY_CLOUDY -> {
+            if (isNight) R.drawable.night_partly_cloudy else R.drawable.day_partly_cloudy
+        }
+        WeatherState.CLOUDY -> {
+            // Für bewölkt verwenden wir das Tag-Icon, da Wolken Tag/Nacht ähnlich aussehen
+            R.drawable.day_partly_cloudy
+        }
+        WeatherState.RAINY -> R.drawable.rain
+        WeatherState.STORMY -> R.drawable.thunderstormy
+        WeatherState.SNOWY -> R.drawable.snow
+        WeatherState.FOGGY -> R.drawable.fog
+        WeatherState.WINDY -> R.drawable.windy
+    }
+}
+
+// Alte Icon-Funktion entfernt, da wir jetzt custom Icons verwenden
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun getWeatherIcon(weatherState: WeatherState): ImageVector {
+    // Diese Funktion wird nicht mehr verwendet, aber bleibt für Kompatibilität
+    // Falls Sie sie noch irgendwo verwenden
     return when (weatherState) {
         WeatherState.SUNNY -> Icons.Filled.WbSunny
         WeatherState.PARTLY_CLOUDY -> Icons.Default.WbCloudy
@@ -136,18 +163,11 @@ fun getWeatherIcon(weatherState: WeatherState): ImageVector {
     }
 }
 
+// Vereinfachte Farbfunktion - keine unterschiedlichen Farben mehr
 @Composable
 fun getWeatherColor(weatherState: WeatherState): Color {
-    return when (weatherState) {
-        WeatherState.SUNNY -> Color(0xFFFFB74D)
-        WeatherState.PARTLY_CLOUDY -> Color(0xFF1D6EB3)
-        WeatherState.CLOUDY -> Color(0xFF282727)
-        WeatherState.RAINY -> Color(0xFF42A5F5)
-        WeatherState.STORMY -> Color(0xFF5C6BC0)
-        WeatherState.SNOWY -> Color(0xFF9C27B0)
-        WeatherState.FOGGY -> Color(0xFF90A4AE)
-        WeatherState.WINDY -> Color(0xFF26C6DA)
-    }
+    // Einheitliche weiße Farbe für alle Icons
+    return Color.White
 }
 
 @Composable
