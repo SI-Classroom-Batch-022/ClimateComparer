@@ -17,19 +17,22 @@ import com.example.climatecomparer.data.model.City
 import com.example.climatecomparer.data.model.GeoLocation
 import com.example.climatecomparer.ui.citylist.component.FavoriteCityCard
 import com.example.climatecomparer.ui.citylist.component.SearchResultCard
+import com.example.climatecomparer.ui.citylist.viewmodel.FavoriteCitiesViewModel
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CityListScreen(
-    favoritesCities: List<City>,
     onCitySelected: (City) -> Unit,
     onBackPressed: () -> Unit,
     onSearchCity: suspend (String) -> List<GeoLocation>,
     onToggleFavorite: (City) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    favoriteCitiesViewModel: FavoriteCitiesViewModel = koinViewModel()
 
 ) {
+    val favoriteCities by favoriteCitiesViewModel.favoritesCities.collectAsState()
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<GeoLocation>>(emptyList()) }
     var isSearching by remember { mutableStateOf(false) }
@@ -138,7 +141,7 @@ fun CityListScreen(
                 }
 
                 // Favoriten
-                if (favoritesCities.isNotEmpty()) {
+                if (favoriteCities.isNotEmpty()) {
                     item {
                         Text(
                             "Favoriten",
@@ -147,9 +150,9 @@ fun CityListScreen(
                         )
                     }
 
-                    items(favoritesCities) { city ->
+                    items(favoriteCities) { city ->
                         FavoriteCityCard(
-                            city = city,
+                            favoriteCity = city,
                             onClick = { onCitySelected(city) },
                             onToggleFavorite = { onToggleFavorite(city) }
                         )

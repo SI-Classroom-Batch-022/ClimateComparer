@@ -25,10 +25,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.climatecomparer.data.model.City
+import com.example.climatecomparer.data.model.FavoriteCity
 
 @Composable
 fun FavoriteCityCard(
-    city: City,
+    favoriteCity: FavoriteCity,
     onClick: () -> Unit,
     onToggleFavorite: () -> Unit
 ) {
@@ -50,13 +51,13 @@ fun FavoriteCityCard(
         ) {
             Column(modifier = Modifier.Companion.weight(1f)) {
                 Text(
-                    text = city.geoLocation.locationName ?: "Unbekannte Stadt",
+                    text = favoriteCity.geoLocation.locationName ?: "Unbekannte Stadt",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Companion.Medium
                 )
                 Text(
                     text = buildString {
-                        city.geoLocation.state?.let { append("$it, ") }
+                        favoriteCity.geoLocation.state?.let { append("$it, ") }
                         city.geoLocation.countryCode?.let { append(it) }
                     },
                     style = MaterialTheme.typography.bodySmall,

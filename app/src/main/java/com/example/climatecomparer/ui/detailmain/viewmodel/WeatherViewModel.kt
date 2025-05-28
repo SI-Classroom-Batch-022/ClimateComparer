@@ -1,8 +1,11 @@
 package com.example.climatecomparer.ui.detailmain.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.climatecomparer.data.model.City
+import com.example.climatecomparer.data.model.FavoriteCity
+import com.example.climatecomparer.data.repository.repointerface.FavoriteCitiesRepositoryInterface
 import com.example.climatecomparer.data.repository.repointerface.WeatherRepositoryInterface
 import com.example.climatecomparer.ui.helper.WeatherUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +15,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WeatherViewModel(
-    private val repository: WeatherRepositoryInterface
+    private val weatherRepository: WeatherRepositoryInterface,
+    private val favoriteCitiesRepository: FavoriteCitiesRepositoryInterface
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(WeatherUiState())
@@ -23,8 +27,8 @@ class WeatherViewModel(
             _uiState.update { it.copy(isLoading = true, error = null) }
 
             try {
-                val currentWeather = repository.getCurrentWeatherForCity(city)
-                val hourly = repository.getHourlyForecastForCity(city)
+                val currentWeather = weatherRepository.getCurrentWeatherForCity(city)
+                val hourly = weatherRepository.getHourlyForecastForCity(city)
 
                 if (currentWeather != null && hourly != null) {
 
@@ -45,4 +49,22 @@ class WeatherViewModel(
             }
         }
     }
+
+    fun markCityAsFavoriteCity(city: City) {
+        viewModelScope.launch {
+            try {
+                val favoriteCity = convertCityToFavoriteCity(city)
+                favoriteCitiesRepository.addFavoriteCity(favoriteCity)
+            } catch(e: Exception) {
+                Log.e("ERROR", "Error while trying to insert favorite city ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun convertCityToFavoriteCity(city: City): FavoriteCity {
+        return FavoriteCity(
+            name = city.geoLocation.locationName.toString()
+        )
+    }
+
 }
