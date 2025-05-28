@@ -50,9 +50,9 @@ fun DetailedMainScreen(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        // Hintergrundbild basierend auf Wetterzustand
+        // Hintergrundbild basierend auf Wetterzustand UND Tageszeit
         Image(
-            painter = painterResource(id = getBackgroundImageResource(weather.weatherState)),
+            painter = painterResource(id = getBackgroundImageResource(weather.weatherState, weather.timeStamp)),
             contentDescription = "Weather background",
             modifier = Modifier
                 .fillMaxSize(),
@@ -108,16 +108,40 @@ fun DetailedMainScreen(
 }
 
 // Funktion zur Auswahl des Hintergrundbildes basierend auf WeatherState
-fun getBackgroundImageResource(weatherState: WeatherState): Int {
+fun getBackgroundImageResource(weatherState: WeatherState, timestamp: LocalDateTime = LocalDateTime.now()): Int {
+    val hour = timestamp.hour
+    val isNight = hour < 6 || hour >= 20 // Nacht zwischen 20:00 und 06:00
+
     return when (weatherState) {
-        WeatherState.SUNNY -> R.drawable.sunny
-        WeatherState.PARTLY_CLOUDY -> R.drawable.partly_cloudy
-        WeatherState.CLOUDY -> R.drawable.very_cloudy
-        WeatherState.RAINY -> R.drawable.rainy
-        WeatherState.STORMY -> R.drawable.thunderstorm
-        WeatherState.SNOWY -> R.drawable.very_cloudy // Fallback, da kein snow.png vorhanden
-        WeatherState.FOGGY -> R.drawable.foggy
-        WeatherState.WINDY -> R.drawable.partly_cloudy // Fallback für windig
+        WeatherState.SUNNY -> {
+            if (isNight) R.drawable.night_sky_clear else R.drawable.sunny
+        }
+        WeatherState.PARTLY_CLOUDY -> {
+            if (isNight) R.drawable.night_sky_partly_cloudy else R.drawable.partly_cloudy
+        }
+        WeatherState.CLOUDY -> {
+            // Für bewölkt verwenden wir teilweise bewölkt als Fallback
+            if (isNight) R.drawable.night_sky_partly_cloudy else R.drawable.very_cloudy
+        }
+        WeatherState.RAINY -> {
+            // Für Regen erstmal Tag-Version verwenden, bis Sie ein night_rain Bild haben
+            R.drawable.rainy
+        }
+        WeatherState.STORMY -> {
+            // Für Gewitter erstmal Tag-Version verwenden
+            R.drawable.thunderstorm
+        }
+        WeatherState.SNOWY -> {
+            // Für Schnee erstmal cloudy als Fallback verwenden
+            if (isNight) R.drawable.night_sky_partly_cloudy else R.drawable.very_cloudy
+        }
+        WeatherState.FOGGY -> {
+            if (isNight) R.drawable.fog_night else R.drawable.fog
+        }
+        WeatherState.WINDY -> {
+            // Für windig verwenden wir teilweise bewölkt als Fallback
+            if (isNight) R.drawable.night_sky_partly_cloudy else R.drawable.partly_cloudy
+        }
     }
 }
 
