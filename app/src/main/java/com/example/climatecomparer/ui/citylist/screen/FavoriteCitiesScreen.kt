@@ -16,10 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.example.climatecomparer.data.model.City
 import com.example.climatecomparer.data.model.GeoLocation
 import com.example.climatecomparer.ui.citylist.component.FavoriteCityCard
+import com.example.climatecomparer.ui.citylist.component.CompactFavoriteCityCard
 import com.example.climatecomparer.ui.citylist.component.SearchResultCard
-import com.example.climatecomparer.ui.citylist.viewmodel.FavoriteCitiesViewModel
 import kotlinx.coroutines.delay
-import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +28,8 @@ fun CityListScreen(
     onBackPressed: () -> Unit,
     onSearchCity: suspend (String) -> List<GeoLocation>,
     onToggleFavorite: (City) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    useCompactCards: Boolean = false // Optional: für kompakte Card-Variante
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<GeoLocation>>(emptyList()) }
@@ -106,7 +106,7 @@ fun CityListScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp) // Erhöhter Spacing für die größeren Cards
             ) {
                 // Suchergebnisse
                 if (searchResults.isNotEmpty()) {
@@ -167,11 +167,22 @@ fun CityListScreen(
                         val favoriteCity = com.example.climatecomparer.data.model.FavoriteCity(
                             geoLocation = city.geoLocation
                         )
-                        FavoriteCityCard(
-                            favoriteCity = favoriteCity,
-                            onClick = { onCitySelected(city) },
-                            onToggleFavorite = { onToggleFavorite(city) }
-                        )
+
+                        if (useCompactCards) {
+                            // Kompakte Version verwenden
+                            CompactFavoriteCityCard(
+                                favoriteCity = favoriteCity,
+                                onClick = { onCitySelected(city) },
+                                onToggleFavorite = { onToggleFavorite(city) }
+                            )
+                        } else {
+                            // Standard-Version mit vollem Wetter-Hintergrund verwenden
+                            FavoriteCityCard(
+                                favoriteCity = favoriteCity,
+                                onClick = { onCitySelected(city) },
+                                onToggleFavorite = { onToggleFavorite(city) }
+                            )
+                        }
                     }
                 } else if (searchResults.isEmpty() && searchQuery.isEmpty()) {
                     item {

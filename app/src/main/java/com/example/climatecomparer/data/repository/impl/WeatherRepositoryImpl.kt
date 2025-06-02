@@ -92,7 +92,7 @@ class WeatherRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    private fun mapWeatherCodeToState(code: Int): WeatherState {
+    fun mapWeatherCodeToState(code: Int): WeatherState {
         return when (code) {
             0 -> WeatherState.SUNNY
             in 1..3 -> WeatherState.PARTLY_CLOUDY
